@@ -1,7 +1,6 @@
 package me.algorithm.dp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -80,13 +79,13 @@ public class MinimalGraphTravel {
     int ans = Integer.MAX_VALUE;
     visited[start] = true;
     for (Integer n : nextNodes) {
-      boolean[] copiedVisited = Arrays.copyOf(visited, visited.length);
       // start with node n with the cost added
-      int c = dfs(graph, n, cost + node.get(n), copiedVisited);
+      int c = dfs(graph, n, cost + node.get(n), visited);
       if (c != -1) {
         ans = Math.min(ans, c);
       }
     }
+    visited[start] = false;
 
     return ans;
   }
