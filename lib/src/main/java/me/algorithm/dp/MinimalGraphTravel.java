@@ -40,16 +40,7 @@ import java.util.List;
  */
 public class MinimalGraphTravel {
 
-  private boolean allVisited(boolean[] visited) {
-
-    for (boolean v : visited) {
-      if (!v) {
-        return false;
-      }
-    }
-
-    return true;
-  }
+  private static int count = 0;
 
   private List<Integer> findNextNodes(List<Integer> node, boolean[] visited) {
     List<Integer> res = new ArrayList<Integer>();
@@ -63,30 +54,32 @@ public class MinimalGraphTravel {
   }
 
   private int dfs(List<List<Integer>> graph, int start, int cost, boolean[] visited) {
-    if (allVisited(visited)) {
+    visited[start] = true;
+    count++;
+    if (count == graph.size()) {
       return cost;
     }
 
     List<Integer> node = graph.get(start);
     List<Integer> nextNodes = findNextNodes(node, visited);
 
-    // no move available, -1
+    // no move available
     if (nextNodes.isEmpty()) {
-      return -1;
+      return Integer.MAX_VALUE;
     }
 
     //all the next moves, we find the least one
     int ans = Integer.MAX_VALUE;
-    visited[start] = true;
+
     for (Integer n : nextNodes) {
       // start with node n with the cost added
       int c = dfs(graph, n, cost + node.get(n), visited);
-      if (c != -1) {
+      if (c != Integer.MAX_VALUE) {
         ans = Math.min(ans, c);
       }
     }
     visited[start] = false;
-
+    count--;
     return ans;
   }
 
@@ -94,6 +87,8 @@ public class MinimalGraphTravel {
   public int minCostToVisitEveryNode(List<List<Integer>> graph) {
     // WRITE YOUR BRILLIANT CODE HERE
     boolean[] visited = new boolean[graph.size()];
-    return dfs(graph, 0, 0, visited);
+    int ans = dfs(graph, 0, 0, visited);
+
+    return ans == Integer.MAX_VALUE ? -1 : ans;
   }
 }
