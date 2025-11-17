@@ -1,6 +1,5 @@
 package me.algorithm.dp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,55 +39,41 @@ import java.util.List;
  */
 public class MinimalGraphTravel {
 
-  private static int count = 0;
-
-  private List<Integer> findNextNodes(List<Integer> node, boolean[] visited) {
-    List<Integer> res = new ArrayList<Integer>();
-    for (int i = 0; i < node.size(); i++) {
-      if (node.get(i) != 0 && !visited[i]) {
-        res.add(i);
-      }
-    }
-
-    return res;
-  }
-
-  private int dfs(List<List<Integer>> graph, int start, int cost, boolean[] visited) {
-    visited[start] = true;
-    count++;
-    if (count == graph.size()) {
-      return cost;
-    }
-
-    List<Integer> node = graph.get(start);
-    List<Integer> nextNodes = findNextNodes(node, visited);
-
-    // no move available
-    if (nextNodes.isEmpty()) {
-      return Integer.MAX_VALUE;
-    }
-
-    //all the next moves, we find the least one
-    int ans = Integer.MAX_VALUE;
-
-    for (Integer n : nextNodes) {
-      // start with node n with the cost added
-      int c = dfs(graph, n, cost + node.get(n), visited);
-      if (c != Integer.MAX_VALUE) {
-        ans = Math.min(ans, c);
-      }
-    }
-    visited[start] = false;
-    count--;
-    return ans;
-  }
-
-  //todo: fix this
+  // we can use bitmask to store the status of the nodes, 1 means visited, 0 means not visited
+  // there will not be more than 15 nodes, so we need at most 15 bits for the node status
+  // the step to check node's status is taking 2^n time.
+  // if the graph only contains 1 node, the cost should be 0, this is the edge case.
+  // for each node cur, the cost should be the min of all neighbor's cost + from 0 to neighbor's cost.
+  // we can use dp to solve this dfs problem.
+  // each node has at most n neighbors, so the time complexity is n^2, adding the bitmask check of 2^n
+  // O(n^2 + 2^n)
+  // the max cost if 1000*14
   public int minCostToVisitEveryNode(List<List<Integer>> graph) {
-    // WRITE YOUR BRILLIANT CODE HERE
-    boolean[] visited = new boolean[graph.size()];
-    int ans = dfs(graph, 0, 0, visited);
+    int[][] dp = new int[1 << graph.size()][graph.size()];
 
-    return ans == Integer.MAX_VALUE ? -1 : ans;
+    int ans = dfs(1, 0, graph, dp);
+    return ans == 14 * 1000 ? -1 : ans;
+  }
+
+  private int dfs(int bitmask, int cur, List<List<Integer>> graph, int[][] dp) {
+    // 1 << cur is to shift 1 left cur positions, the bitmask with cur visited
+    // the starting point is bitmask 1 with cur at 0
+    if (bitmask == (1 << graph.size()) - 1) { // single node. 1 << 1 is 10, -1 becomes 01
+      return 0;
+    }
+
+    if (dp[bitmask][cur] != 0) {
+      return dp[bitmask][cur];
+    }
+
+    int ans = 14 * 1000;
+    for (int i = 0; i < graph.get(cur).size(); i++) {
+      // if i has been visited before, and there is edge between i and cur
+      if (graph.get(cur).get(i) != 0 && (bitmask & (1 << i)) == 0) {
+        ans = Math.min(ans, dfs(bitmask | (1 << i), i, graph, dp) + graph.get(cur).get(i));
+      }
+    }
+    dp[bitmask][cur] = ans;
+    return ans;
   }
 }
