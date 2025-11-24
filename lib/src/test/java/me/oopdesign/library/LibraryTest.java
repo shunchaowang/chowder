@@ -3,13 +3,14 @@ package me.oopdesign.library;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 class LibraryTest {
 
+  private final Logger log = LoggerFactory.getLogger(this.getClass());
   Library library;
 
   @BeforeEach

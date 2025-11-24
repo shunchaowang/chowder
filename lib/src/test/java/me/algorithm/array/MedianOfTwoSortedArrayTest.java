@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 class MedianOfTwoSortedArrayTest {
 
-  private Logger logger = LoggerFactory.getLogger(MedianOfTwoSortedArrayTest.class);
+  private final Logger logger = LoggerFactory.getLogger(MedianOfTwoSortedArrayTest.class);
 
   @Test
   void testCommonCase1() {

@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 
 class FruitsIntoBasketsTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(FruitsIntoBasketsTest.class);
+  private final Logger logger = LoggerFactory.getLogger(FruitsIntoBasketsTest.class);
 
   @Test
   void findCharFruits() {
     int[] arr = new int[26];
-    LOGGER.info("Check int array init {}", Arrays.toString(arr));
+    logger.info("Check int array init {}", Arrays.toString(arr));
     arr['A' - 'A'] = 1;
-    LOGGER.info("Check int array index auto conversion {}", Arrays.toString(arr));
+    logger.info("Check int array index auto conversion {}", Arrays.toString(arr));
 
     char[] fruits = {'A', 'B', 'C', 'B', 'B', 'C'};
     assertEquals(5, FruitsIntoBaskets.findCharFruits(fruits));

@@ -1,12 +1,14 @@
 package me.algorithm.backtracking;
 
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 class SubsetTest {
+
+  private final Logger log = LoggerFactory.getLogger(SubsetTest.class);
 
   @Test
   @DisplayName("test case for [1,2,3]")

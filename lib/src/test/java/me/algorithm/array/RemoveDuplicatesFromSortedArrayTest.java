@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 class RemoveDuplicatesFromSortedArrayTest {
 
-  private static Logger logger = LoggerFactory.getLogger(RemoveDuplicatesFromSortedArrayTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(RemoveDuplicatesFromSortedArrayTest.class);
   private int[] case1 = {1, 3, 3, 3, 4, 4, 6};
 
   @BeforeAll

@@ -2,11 +2,13 @@ package me.playground.encoding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 class CharConversionTest {
+
+  private final Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Test
   void convertCharToAscii() {
@@ -20,7 +22,8 @@ class CharConversionTest {
 
   @Test
   void convertCharToUnicode() {
-    log.debug("convert a into the unicode by getNumericValue  returns {}", CharConversion.convertCharToUnicode('a'));
+    log.debug("convert a into the unicode by getNumericValue  returns {}",
+        CharConversion.convertCharToUnicode('a'));
     assertEquals(10, CharConversion.convertCharToUnicode('a'));
   }
 
