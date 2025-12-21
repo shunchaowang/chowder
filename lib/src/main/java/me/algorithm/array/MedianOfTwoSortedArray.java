@@ -104,27 +104,76 @@ public final class MedianOfTwoSortedArray {
   }
 
   public static double findMedianByBinarySearch(final int[] nums1, final int[] nums2) {
-    // we compare the median of the 2 arrays, based on the comparison to eliminate
-    // the elements
-    // 1st array is m length, 2nd array is n length, image we merge 2 arrays, total
-    // length is m+n
-    // if m+n is odd, the (m+n)/2+1 is the median; else we need elements of (m+n)/2
-    // and (m+n)/2+1
-    // * example {2, 4, 6}(m =3) and {1, 3, 5, 7}(n=4), the merge is
-    // {1,2,3,4,5,6,7},
-    // m+n=7, (m+n)/2=3, we need element 4, the index is (m+n)/2
-    // * example {2, 4, 6}(m =3) and {1, 3, 5}(n=3), the merge is {1,2,3,4,5,6},
-    // m+n=6, we need element at index 2 and 3, they are (m+n)/2-1 and (m+n)/2.
-    // m+n=7, (m+n)/2=3, we need element 4, the index is (m+n)/2
-    // image the arrays are merge, when comparing m1 and m2, there are 3 cases:
-    // 1. m1==m2, {1,4,5} and {2,4,6} -> {1,2,4,4,5,6}, the merged is
-    // {...,m1,m2...}},
-    // m1 and m2 are adjacent since the
-    // array is sorted,
-    // the left side has m/2+n/2, total is (m+n)/2 elements, so the m1 and m2 are
-    // the elements we are looking for;
-    // 2. m1<m2
-    // 3. m1>m2
-    return 0.0;
+
+    // if any is empty
+    if (nums1.length == 0 && nums2.length == 0)
+      return 0.0;
+    if (nums1.length == 0) {
+      if (nums2.length % 2 == 0) {
+        return (double) (nums2[(nums2.length - 1) / 2] + nums2[(nums2.length - 1) / 2 + 1]) / 2;
+      } else {
+        return nums2[(nums2.length - 1) / 2];
+      }
+    }
+    if (nums2.length == 0) {
+      if (nums1.length % 2 == 0) {
+        return (double) (nums1[(nums1.length - 1) / 2] + nums1[(nums1.length - 1) / 2 + 1]) / 2;
+      } else {
+        return nums1[(nums1.length - 1) / 2];
+      }
+    }
+    // if total is odd, the ans is the min of next index from nums1 and nums2
+    // if total is even, the ans is (max(index1,index2)+min(index1+1,index2+1))/2
+
+    int[] a = nums1, b = nums2;
+    int total = a.length + b.length;
+    int half = total / 2;
+    if (b.length < a.length) {
+      a = nums2;
+      b = nums1;
+    }
+
+    int l = 0, r = a.length - 1;
+    while (true) {
+      // index1, index2
+      // next1, next2
+      // num1Index, num2Index
+      int i = (l + r) / 2; // count of number is index1+1
+      int j = half - i - 2; // count of number is index2+1
+      int aLeft = Integer.MIN_VALUE;
+      if (i >= 0) {
+        aLeft = nums1[i];
+      }
+      int bLeft = Integer.MIN_VALUE;
+      if (j >= 0) {
+        bLeft = nums2[j];
+      }
+      int aRight = Integer.MAX_VALUE;
+      if (i + 1 < a.length) {
+        aRight = nums1[i + 1];
+      }
+      int bRight = Integer.MAX_VALUE;
+      if (j + 1 < b.length) {
+        bRight = nums2[j + 1];
+      }
+
+      if (aLeft <= bRight && bLeft <= aRight) { // we've found the position
+        // if total is odd, the ans the min of both next
+        // if total is even, the ans is max(index1,index2)+min(nex1,next2)/2
+        if (total % 2 == 0) {
+          return (double) (Math.max(aLeft, bLeft) + Math.min(aRight, bRight)) / 2;
+        } else {
+          return Math.min(aRight, bRight);
+        }
+      }
+
+      if (aLeft > bRight) { // we need to shift index1 to the left
+        r = i - 1;
+      }
+
+      if (bLeft > aRight) { // we need to shift index1 to the right
+        l = i + 1;
+      }
+    }
   }
 }

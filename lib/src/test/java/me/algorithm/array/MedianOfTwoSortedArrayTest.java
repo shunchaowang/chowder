@@ -1,5 +1,6 @@
 package me.algorithm.array;
 
+import static me.algorithm.array.MedianOfTwoSortedArray.findMedianByBinarySearch;
 import static me.algorithm.array.MedianOfTwoSortedArray.findMedianByCount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -82,4 +83,29 @@ class MedianOfTwoSortedArrayTest {
 
     assertEquals(expected, actual);
   }
+
+  @Test
+  void testCommonCase1ByBS() {
+    int[] nums1 = {1, 3};
+    int[] nums2 = {2};
+
+    double expected = 2.0;
+    double actual = findMedianByBinarySearch(nums1, nums2);
+    logger.info("Median of {} and {} is {}", nums1, nums2, actual);
+
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  void testOneEmptyArrayByBS() {
+    int[] nums1 = {2};
+    int[] nums2 = new int[0];
+
+    double expected = 2;
+    double actual = findMedianByBinarySearch(nums1, nums2);
+    logger.info("Median of {} and {} is {}", nums1, nums2, actual);
+
+    assertEquals(expected, actual);
+  }
+
 }
