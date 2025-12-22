@@ -34,94 +34,26 @@ public final class MedianOfTwoSortedArray {
   private MedianOfTwoSortedArray() {
   }
 
-  /**
-   * This is the brute force approach, we merge the two arrays, then calculate the median.
-   *
-   * @param nums1
-   * @param nums2
-   * @return
-   */
-  public static double findMedian(int[] nums1, int[] nums2) {
-
-    double median;
-    int[] merged = ArrayUtils.mergeTwoSortedArray(nums1, nums2);
-    if (merged.length % 2 == 0) {
-      median = ((double) merged[merged.length / 2 - 1] + merged[merged.length / 2]) / 2;
-    } else {
-      median = merged[merged.length / 2];
-    }
-    return median;
-  }
-
-  /**
-   * Coming from the merge approach, we only need 1 item (arr[length/2]) for odd number merged
-   * array, and 2 items for even number merged array. (arr[length/2-1], and arr[length/2]).
-   *
-   * <p>we can borrow the idea from the merging approach, but to remember the counts instead of the
-   * elements.
-   *
-   * @param nums1
-   * @param nums2
-   * @return
-   */
-  public static double findMedianByCount(int[] nums1, int[] nums2) {
-
-    int length = nums1.length + nums2.length;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-
-    // count till length /2 -1, then we should reach the elements we need
-    float m1 = 0;
-    float m2 = 0;
-    while (i < nums1.length && j < nums2.length && k <= length / 2) {
-      m1 = m2;
-      if (nums1[i] < nums2[j]) {
-        m2 = nums1[i++];
-      } else {
-        m2 = nums2[j++];
-      }
-      k++;
-    }
-
-    // nums1 still has element and we are not reaching the half length
-    while (k <= length / 2 && i < nums1.length) {
-      m1 = m2;
-      k++;
-      m2 = nums1[i++];
-    }
-    // nums2 still has element and we are not reaching the half length
-    while (k <= length / 2 && j < nums2.length) {
-      m1 = m2;
-      k++;
-      m2 = nums2[j];
-    }
-    if (length % 2 == 0) {
-      return (m1 + m2) / 2;
-    }
-
-    return m2;
-  }
-
-  public static double findMedianByBinarySearch(final int[] nums1, final int[] nums2) {
+  public static double findMedian(final int[] nums1, final int[] nums2) {
 
     // if any is empty
-    if (nums1.length == 0 && nums2.length == 0)
-      return 0.0;
-    if (nums1.length == 0) {
-      if (nums2.length % 2 == 0) {
-        return (double) (nums2[(nums2.length - 1) / 2] + nums2[(nums2.length - 1) / 2 + 1]) / 2;
-      } else {
-        return nums2[(nums2.length - 1) / 2];
-      }
-    }
-    if (nums2.length == 0) {
-      if (nums1.length % 2 == 0) {
-        return (double) (nums1[(nums1.length - 1) / 2] + nums1[(nums1.length - 1) / 2 + 1]) / 2;
-      } else {
-        return nums1[(nums1.length - 1) / 2];
-      }
-    }
+//    if (nums1.length == 0 && nums2.length == 0) {
+//      return 0.0;
+//    }
+//    if (nums1.length == 0) {
+//      if (nums2.length % 2 == 0) {
+//        return (double) (nums2[(nums2.length - 1) / 2] + nums2[(nums2.length - 1) / 2 + 1]) / 2;
+//      } else {
+//        return nums2[(nums2.length - 1) / 2];
+//      }
+//    }
+//    if (nums2.length == 0) {
+//      if (nums1.length % 2 == 0) {
+//        return (double) (nums1[(nums1.length - 1) / 2] + nums1[(nums1.length - 1) / 2 + 1]) / 2;
+//      } else {
+//        return nums1[(nums1.length - 1) / 2];
+//      }
+//    }
     // if total is odd, the ans is the min of next index from nums1 and nums2
     // if total is even, the ans is (max(index1,index2)+min(index1+1,index2+1))/2
 
@@ -134,7 +66,7 @@ public final class MedianOfTwoSortedArray {
     }
 
     int l = 0, r = a.length - 1;
-    while (true) {
+    while (l <= r) {
       // index1, index2
       // next1, next2
       // num1Index, num2Index
@@ -175,5 +107,25 @@ public final class MedianOfTwoSortedArray {
         l = i + 1;
       }
     }
+
+    // it means all items in A are not less than any items in B, median is in B from the start
+    if (r < 0) {
+      if (total % 2 == 0) {
+        return (double) (b[total / 2 - 1] + b[total / 2]) / 2;
+      } else {
+        return b[total / 2];
+      }
+    }
+
+    // it means all items in A are not larger than any items in B, median is in B from start to total / 2 - a.length
+    if (l >= a.length) {
+      if (total % 2 == 0) {
+        return (double) (b[total / 2 - a.length] + b[total / 2 - a.length - 1]) / 2;
+      } else {
+        return b[total / 2 - a.length];
+      }
+    }
+
+    return 0.0;
   }
 }
