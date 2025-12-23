@@ -34,98 +34,67 @@ public final class MedianOfTwoSortedArray {
   private MedianOfTwoSortedArray() {
   }
 
-  public static double findMedian(final int[] nums1, final int[] nums2) {
+  public static double findMedianBs(int[] a, int[] b) {
 
-    // if any is empty
-//    if (nums1.length == 0 && nums2.length == 0) {
-//      return 0.0;
-//    }
-//    if (nums1.length == 0) {
-//      if (nums2.length % 2 == 0) {
-//        return (double) (nums2[(nums2.length - 1) / 2] + nums2[(nums2.length - 1) / 2 + 1]) / 2;
-//      } else {
-//        return nums2[(nums2.length - 1) / 2];
-//      }
-//    }
-//    if (nums2.length == 0) {
-//      if (nums1.length % 2 == 0) {
-//        return (double) (nums1[(nums1.length - 1) / 2] + nums1[(nums1.length - 1) / 2 + 1]) / 2;
-//      } else {
-//        return nums1[(nums1.length - 1) / 2];
-//      }
-//    }
-    // if total is odd, the ans is the min of next index from nums1 and nums2
-    // if total is even, the ans is (max(index1,index2)+min(index1+1,index2+1))/2
+    // for each array n, n.length/2 is the index number that there are index items to its left
 
-    int[] a = nums1, b = nums2;
-    int total = a.length + b.length;
-    int half = total / 2;
-    if (b.length < a.length) {
-      a = nums2;
-      b = nums1;
+    // we need to find the pivots on both arrays that all the numbers to the left are landed to the left of the merged,
+    // for [2,4], m1 is (0+2)/2=1, the pivot is m1-1, total/2 is 2, so the numbers from b is 2-1=1.
+    // m=2, n=3, total=2, m1=1, m2=2-1=1=>l1=a[m1-1]=2, r1=a[m1]=4; l2=b[m2-1]=1, r2=b[m2]=3
+    // we want to set m is the length of a, n is the length of b.
+    // total is m+n divided by 2
+    // total=(m+n)/2, m1=(lo+hi)/2, m2=(m+n)/2 - m1
+    // l1 = a[m1-1], rl=a[m1], l2=b[m2-1], r2=b[m2]
+    /* 1. if the merged array is odd
+     * l1<=r2 && l2<=r1, min(r1, r2).
+     * 2. if the merged array is even
+     * [2,4] and [1,3], the result should be (2+3)/2=2.5.
+     * m=2,n=2,total=2 => m1=1, l1=a[m1-1]=2,r1=a[m1]=4;m2=total-m1=1,l2=a[m2-1]=1,r2=a[m2]=3
+     * l1<=r2&&l2<=r1 => (max(l1,l2)+min(r1,r2))/2.
+     * 3. [1,3] and [2]
+     * m=2, n=1
+     * lo=0, hi=2, m1=1, m2=0
+     * l1=1, r1=3
+     * l1=min, r2=2
+     * ans=2 which is min(r1, r2)
+     *
+     * for[2,4] and [1,3,5], the merged is [1,2,3,4,5], the median is 3, index is (0+5)/2=2
+     * m=2, n=3, m+n / 2=2
+     * lo=0, hi=2, m1=1, m2=1
+     * l1=2, r1=4
+     * l2=1, r2=3
+     * */
+    int m = a.length, n = b.length;
+    if (n < m) {
+      return findMedianBs(b, a);
     }
+    int lo = 0, hi = m;
+    while (lo <= hi) {
+      int m1 = (lo + hi) / 2;
+      int m2 = (m + n) / 2 - m1;
 
-    int l = 0, r = a.length - 1;
-    while (l <= r) {
-      // index1, index2
-      // next1, next2
-      // num1Index, num2Index
-      int i = (l + r) / 2; // count of number is index1+1
-      int j = half - i - 2; // count of number is index2+1
-      int aLeft = Integer.MIN_VALUE;
-      if (i >= 0) {
-        aLeft = nums1[i];
-      }
-      int bLeft = Integer.MIN_VALUE;
-      if (j >= 0) {
-        bLeft = nums2[j];
-      }
-      int aRight = Integer.MAX_VALUE;
-      if (i + 1 < a.length) {
-        aRight = nums1[i + 1];
-      }
-      int bRight = Integer.MAX_VALUE;
-      if (j + 1 < b.length) {
-        bRight = nums2[j + 1];
-      }
+      int l1 = (m1 - 1 >= 0) ? a[m1 - 1] : Integer.MIN_VALUE;
+      int r1 = (m1 < m) ? a[m1] : Integer.MAX_VALUE;
+      int l2 = (m2 - 1 >= 0) ? b[m2 - 1] : Integer.MIN_VALUE;
+      int r2 = (m2 < n) ? b[m2] : Integer.MAX_VALUE;
 
-      if (aLeft <= bRight && bLeft <= aRight) { // we've found the position
-        // if total is odd, the ans the min of both next
-        // if total is even, the ans is max(index1,index2)+min(nex1,next2)/2
-        if (total % 2 == 0) {
-          return (double) (Math.max(aLeft, bLeft) + Math.min(aRight, bRight)) / 2;
+      // found the pivots
+      if (l1 <= r2 && l2 <= r1) {
+        if ((m + n) % 2 == 0) {
+          return (Math.max(l1, l2) + Math.min(r1, r2)) / 2.0;
         } else {
-          return Math.min(aRight, bRight);
+          return Math.min(r1, r2);
         }
       }
 
-      if (aLeft > bRight) { // we need to shift index1 to the left
-        r = i - 1;
-      }
-
-      if (bLeft > aRight) { // we need to shift index1 to the right
-        l = i + 1;
-      }
-    }
-
-    // it means all items in A are not less than any items in B, median is in B from the start
-    if (r < 0) {
-      if (total % 2 == 0) {
-        return (double) (b[total / 2 - 1] + b[total / 2]) / 2;
+      // shift high to the left
+      if (l1 > r2) {
+        hi = m1 - 1;
       } else {
-        return b[total / 2];
+        lo = m1 + 1;
       }
-    }
 
-    // it means all items in A are not larger than any items in B, median is in B from start to total / 2 - a.length
-    if (l >= a.length) {
-      if (total % 2 == 0) {
-        return (double) (b[total / 2 - a.length] + b[total / 2 - a.length - 1]) / 2;
-      } else {
-        return b[total / 2 - a.length];
-      }
     }
-
     return 0.0;
   }
 }

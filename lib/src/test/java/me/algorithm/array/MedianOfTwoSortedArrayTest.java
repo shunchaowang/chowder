@@ -1,6 +1,6 @@
 package me.algorithm.array;
 
-import static me.algorithm.array.MedianOfTwoSortedArray.findMedian;
+import static me.algorithm.array.MedianOfTwoSortedArray.findMedianBs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -12,60 +12,60 @@ class MedianOfTwoSortedArrayTest {
   private final Logger logger = LoggerFactory.getLogger(MedianOfTwoSortedArrayTest.class);
 
   @Test
-  void testCommonCase1() {
+  void testCommonCase1Bs() {
     int[] nums1 = {1, 3};
     int[] nums2 = {2};
 
     double expected = 2.0;
-    double actual = findMedian(nums1, nums2);
+    double actual = findMedianBs(nums1, nums2);
     logger.info("Median of {} and {} is {}", nums1, nums2, actual);
 
     assertEquals(expected, actual);
   }
 
   @Test
-  void testCommonCase2() {
+  void testCommonCase2Bs() {
     int[] nums1 = {1, 2};
     int[] nums2 = {3, 4};
 
     double expected = 2.5;
-    double actual = findMedian(nums1, nums2);
+    double actual = findMedianBs(nums1, nums2);
     logger.info("Median of {} and {} is {}", nums1, nums2, actual);
 
     assertEquals(expected, actual);
   }
 
   @Test
-  void testAllZeros() {
+  void testAllZerosBs() {
     int[] nums1 = {0, 0};
     int[] nums2 = {0, 0};
 
     double expected = 0;
-    double actual = findMedian(nums1, nums2);
+    double actual = findMedianBs(nums1, nums2);
     logger.info("Median of {} and {} is {}", nums1, nums2, actual);
 
     assertEquals(expected, actual);
   }
 
   @Test
-  void testOneEmptyArray() {
+  void testOneEmptyArrayBs() {
     int[] nums1 = {2};
     int[] nums2 = new int[0];
 
     double expected = 2;
-    double actual = findMedian(nums1, nums2);
+    double actual = findMedianBs(nums1, nums2);
     logger.info("Median of {} and {} is {}", nums1, nums2, actual);
 
     assertEquals(expected, actual);
   }
 
   @Test
-  void testCase3() {
-    int[] nums1 = {-10,-9,-8};
-    int[] nums2 = {1,2};
+  void testCase3Bs() {
+    int[] nums1 = {-10, -9, -8};
+    int[] nums2 = {1, 2};
 
     double expected = -8.0;
-    double actual = findMedian(nums1, nums2);
+    double actual = findMedianBs(nums1, nums2);
     logger.info("Median of {} and {} is {}", nums1, nums2, actual);
 
     assertEquals(expected, actual);
