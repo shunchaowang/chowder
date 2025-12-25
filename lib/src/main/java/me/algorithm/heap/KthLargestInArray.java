@@ -49,20 +49,19 @@ public class KthLargestInArray {
     }
     int pivot = nums[hi];
 
-    int i = lo - 1;
+    int i = lo;
 
     for (int j = lo; j < hi; j++) {
-      if (nums[j] <= pivot) {
-        i++;
-        int temp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = temp;
+      if (nums[j] < pivot) {
+        int temp = nums[j];
+        nums[j] = nums[i];
+        nums[i++] = temp;
       }
     }
 
-    int temp = nums[i + 1];
-    nums[i + 1] = pivot;
+    int temp = nums[i];
+    nums[i] = pivot;
     nums[hi] = temp;
-    return i + 1;
+    return i;
   }
 }
