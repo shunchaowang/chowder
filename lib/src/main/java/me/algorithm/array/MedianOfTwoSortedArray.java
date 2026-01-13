@@ -34,97 +34,67 @@ public final class MedianOfTwoSortedArray {
   private MedianOfTwoSortedArray() {
   }
 
-  /**
-   * This is the brute force approach, we merge the two arrays, then calculate the median.
-   *
-   * @param nums1
-   * @param nums2
-   * @return
-   */
-  public static double findMedian(int[] nums1, int[] nums2) {
+  public static double findMedianBs(int[] a, int[] b) {
 
-    double median;
-    int[] merged = ArrayUtils.mergeTwoSortedArray(nums1, nums2);
-    if (merged.length % 2 == 0) {
-      median = ((double) merged[merged.length / 2 - 1] + merged[merged.length / 2]) / 2;
-    } else {
-      median = merged[merged.length / 2];
+    // for each array n, n.length/2 is the index number that there are index items to its left
+
+    // we need to find the pivots on both arrays that all the numbers to the left are landed to the left of the merged,
+    // for [2,4], m1 is (0+2)/2=1, the pivot is m1-1, total/2 is 2, so the numbers from b is 2-1=1.
+    // m=2, n=3, total=2, m1=1, m2=2-1=1=>l1=a[m1-1]=2, r1=a[m1]=4; l2=b[m2-1]=1, r2=b[m2]=3
+    // we want to set m is the length of a, n is the length of b.
+    // total is m+n divided by 2
+    // total=(m+n)/2, m1=(lo+hi)/2, m2=(m+n)/2 - m1
+    // l1 = a[m1-1], rl=a[m1], l2=b[m2-1], r2=b[m2]
+    /* 1. if the merged array is odd
+     * l1<=r2 && l2<=r1, min(r1, r2).
+     * 2. if the merged array is even
+     * [2,4] and [1,3], the result should be (2+3)/2=2.5.
+     * m=2,n=2,total=2 => m1=1, l1=a[m1-1]=2,r1=a[m1]=4;m2=total-m1=1,l2=a[m2-1]=1,r2=a[m2]=3
+     * l1<=r2&&l2<=r1 => (max(l1,l2)+min(r1,r2))/2.
+     * 3. [1,3] and [2]
+     * m=2, n=1
+     * lo=0, hi=2, m1=1, m2=0
+     * l1=1, r1=3
+     * l1=min, r2=2
+     * ans=2 which is min(r1, r2)
+     *
+     * for[2,4] and [1,3,5], the merged is [1,2,3,4,5], the median is 3, index is (0+5)/2=2
+     * m=2, n=3, m+n / 2=2
+     * lo=0, hi=2, m1=1, m2=1
+     * l1=2, r1=4
+     * l2=1, r2=3
+     * */
+    int m = a.length, n = b.length;
+    if (n < m) {
+      return findMedianBs(b, a);
     }
-    return median;
-  }
+    int lo = 0, hi = m;
+    while (lo <= hi) {
+      int m1 = (lo + hi) / 2;
+      int m2 = (m + n) / 2 - m1;
 
-  /**
-   * Coming from the merge approach, we only need 1 item (arr[length/2]) for odd number merged
-   * array, and 2 items for even number merged array. (arr[length/2-1], and arr[length/2]).
-   *
-   * <p>we can borrow the idea from the merging approach, but to remember the counts instead of the
-   * elements.
-   *
-   * @param nums1
-   * @param nums2
-   * @return
-   */
-  public static double findMedianByCount(int[] nums1, int[] nums2) {
+      int l1 = (m1 - 1 >= 0) ? a[m1 - 1] : Integer.MIN_VALUE;
+      int r1 = (m1 < m) ? a[m1] : Integer.MAX_VALUE;
+      int l2 = (m2 - 1 >= 0) ? b[m2 - 1] : Integer.MIN_VALUE;
+      int r2 = (m2 < n) ? b[m2] : Integer.MAX_VALUE;
 
-    int length = nums1.length + nums2.length;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-
-    // count till length /2 -1, then we should reach the elements we need
-    float m1 = 0;
-    float m2 = 0;
-    while (i < nums1.length && j < nums2.length && k <= length / 2) {
-      m1 = m2;
-      if (nums1[i] < nums2[j]) {
-        m2 = nums1[i++];
-      } else {
-        m2 = nums2[j++];
+      // found the pivots
+      if (l1 <= r2 && l2 <= r1) {
+        if ((m + n) % 2 == 0) {
+          return (Math.max(l1, l2) + Math.min(r1, r2)) / 2.0;
+        } else {
+          return Math.min(r1, r2);
+        }
       }
-      k++;
-    }
 
-    // nums1 still has element and we are not reaching the half length
-    while (k <= length / 2 && i < nums1.length) {
-      m1 = m2;
-      k++;
-      m2 = nums1[i++];
-    }
-    // nums2 still has element and we are not reaching the half length
-    while (k <= length / 2 && j < nums2.length) {
-      m1 = m2;
-      k++;
-      m2 = nums2[j];
-    }
-    if (length % 2 == 0) {
-      return (m1 + m2) / 2;
-    }
+      // shift high to the left
+      if (l1 > r2) {
+        hi = m1 - 1;
+      } else {
+        lo = m1 + 1;
+      }
 
-    return m2;
-  }
-
-  public static double findMedianByBinarySearch(final int[] nums1, final int[] nums2) {
-    // we compare the median of the 2 arrays, based on the comparison to eliminate
-    // the elements
-    // 1st array is m length, 2nd array is n length, image we merge 2 arrays, total
-    // length is m+n
-    // if m+n is odd, the (m+n)/2+1 is the median; else we need elements of (m+n)/2
-    // and (m+n)/2+1
-    // * example {2, 4, 6}(m =3) and {1, 3, 5, 7}(n=4), the merge is
-    // {1,2,3,4,5,6,7},
-    // m+n=7, (m+n)/2=3, we need element 4, the index is (m+n)/2
-    // * example {2, 4, 6}(m =3) and {1, 3, 5}(n=3), the merge is {1,2,3,4,5,6},
-    // m+n=6, we need element at index 2 and 3, they are (m+n)/2-1 and (m+n)/2.
-    // m+n=7, (m+n)/2=3, we need element 4, the index is (m+n)/2
-    // image the arrays are merge, when comparing m1 and m2, there are 3 cases:
-    // 1. m1==m2, {1,4,5} and {2,4,6} -> {1,2,4,4,5,6}, the merged is
-    // {...,m1,m2...}},
-    // m1 and m2 are adjacent since the
-    // array is sorted,
-    // the left side has m/2+n/2, total is (m+n)/2 elements, so the m1 and m2 are
-    // the elements we are looking for;
-    // 2. m1<m2
-    // 3. m1>m2
+    }
     return 0.0;
   }
 }
