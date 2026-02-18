@@ -1,6 +1,7 @@
 package me.algorithm.array;
 
 import static me.algorithm.array.ArrayUtils.mergeTwoSortedArray;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -22,5 +23,22 @@ class ArrayUtilsTest {
     int[] result = mergeTwoSortedArray(nums1, nums2);
     logger.info(Arrays.toString(result));
     assertTrue(Arrays.equals(expected, result));
+  }
+
+  @Test
+  void testSortArray1() {
+    int[] nums = {5, 2, 3, 1};
+    ArrayUtils arrayUtils = new ArrayUtils();
+    arrayUtils.sort(nums);
+    IO.println("nums after sorted " + nums);
+    assertArrayEquals(new int[]{1, 2, 3, 5}, nums);
+  }
+
+  @Test
+  void testSortArray2() {
+    int[] nums = {5, 1, 1, 2, 0, 0};
+    ArrayUtils arrayUtils = new ArrayUtils();
+    arrayUtils.sort(nums);
+    assertArrayEquals(new int[]{0, 0, 1, 1, 2, 5}, nums);
   }
 }
